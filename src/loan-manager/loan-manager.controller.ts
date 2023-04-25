@@ -16,26 +16,27 @@ export class LoanManagerController {
   }
 
   @Post('/loan-process')
-  async facadeApi(@Body() body: any) {
-    /// Loan application and OCR
+  async loanProcess(@Body() body: any) {
+    /// Loan application and OCR (localhost:3000 to be replaced with the URL)
     const result = await lastValueFrom(
-      this.client.send('underlying-microservice', body),
+      this.client.send('localhost:3000/loan-application', body),
     );
 
-    /// Commercial service
-    const result1 = await lastValueFrom(
-      this.client.send('underlying-microservice', body),
-    );
-
-    /// Risk management service
-    const result2 = await lastValueFrom(
-      this.client.send('underlying-microservice', body),
-    );
-
-    /// Credit service
-    const result3 = await lastValueFrom(
-      this.client.send('underlying-microservice', body),
-    );
+    // /// Commercial service
+    // const result1 = await lastValueFrom(
+    //   this.client.send('localhost:3002/check-eligibility', {}),
+    // );
+    //
+    // /// Risk management service
+    // const result2 = await lastValueFrom(
+    //   this.client.send('localhost:3003/check-ratio', {}),
+    // );
+    //
+    // /// Credit service
+    // if(result1 && result2)
+    // const result3 = await lastValueFrom(
+    //   this.client.send('localhost:3003/generate-agreement', {}),
+    // );
     return result;
   }
 }
