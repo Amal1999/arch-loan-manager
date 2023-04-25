@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from "@nestjs/common";
 import { ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 
@@ -7,19 +7,18 @@ export class LoanManagerController {
   private client: ClientProxy;
 
   constructor() {
-    this.client = ClientProxyFactory.create({
-      options: {
-        host: 'localhost',
-        port: 3001,
-      },
-    });
+    this.client = ClientProxyFactory.create({});
   }
 
+  @Get()
+  hey() {
+    return 'heeeyyyy';
+  }
   @Post('/loan-process')
   async loanProcess(@Body() body: any) {
     /// Loan application and OCR (localhost:3000 to be replaced with the URL)
     const result = await lastValueFrom(
-      this.client.send('localhost:3000/loan-application', body),
+      this.client.send('localhost:3001/loan-application', body),
     );
 
     // /// Commercial service
