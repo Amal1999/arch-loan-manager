@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 
@@ -15,10 +23,20 @@ export class LoanManagerController {
     return 'heeeyyyy';
   }
   @Post('/loan-process')
-  async loanProcess(@Body() body: any) {
+  @UseInterceptors(FileInterceptor('file'))
+  async loanProcess(@UploadedFile() file, @Body() body) {
     /// Loan application and OCR (localhost:3000 to be replaced with the URL)
-    const result = await lastValueFrom(
-      this.client.send('localhost:3001/loan-application', body),
+
+    body = JSON.stringify(body);
+
+    console.log(file);
+    console.log(body);
+    const result = await this.client.send(
+      'https://localhost:3000/loan-application',
+      {
+        file,
+        ...body,
+      },
     );
 
     // /// Commercial service
